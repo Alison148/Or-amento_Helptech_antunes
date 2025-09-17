@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Orçamento - HelpTech Antunes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --brand:#2E7D32;
+      --brand-weak:#E8F5E9;
+      --ink:#111827;
+      --muted:#6B7280;
+      --line:#E5E7EB;
+      --bg:#FFFFFF;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:14px/1.6 Arial,Helvetica,sans-serif}
+    .sheet{
+      max-width: 900px;
+      margin: 28px auto;
+      padding: 28px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,.04);
+    }
+    .header{
+      display:flex; gap:20px; align-items:center; border-bottom:1px solid var(--line); padding-bottom:16px;
+    }
+    .logo{
+      width:88px; height:88px; border-radius:12px; background:var(--brand-weak);
+      display:flex; align-items:center; justify-content:center; overflow:hidden;
+    }
+    .logo img{max-width:100%; max-height:100%}
+    .brand{
+      flex:1;
+    }
+    .brand h1{
+      font-size:22px; margin:0 0 4px; color:var(--brand);
+      letter-spacing:.3px;
+    }
+    .brand .muted{color:var(--muted); font-size:12px}
+    .meta{
+      text-align:right; min-width:220px;
+    }
+    .badge{
+      display:inline-block; font-weight:700; letter-spacing:.5px;
+      padding:4px 10px; border-radius:999px; background:var(--brand-weak); color:var(--brand); font-size:11px;
+      margin-bottom:8px;
+    }
+    .meta table{width:100%; border-collapse:collapse; font-size:12px}
+    .meta th,.meta td{text-align:right; padding:2px 0; white-space:nowrap}
+    .meta th{color:var(--muted); font-weight:600; padding-right:8px}
+
+    .blocks{display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; margin:18px 0 6px}
+    .card{
+      border:1px solid var(--line); border-radius:10px; padding:14px; background:#fff;
+    }
+    .card h3{margin:0 0 6px; font-size:14px; color:var(--ink)}
+    .card p{margin:2px 0; font-size:13px; color:#1f2937}
+    .pill{
+      display:inline-block; background:#F9FAFB; border:1px solid var(--line); border-radius:999px; padding:3px 8px; font-size:12px; color:#374151;
+    }
+
+    table.items{width:100%; border-collapse:collapse; margin-top:12px}
+    table.items thead th{
+      text-align:left; font-size:12px; color:#374151; background:#F9FAFB; border-bottom:1px solid var(--line);
+      padding:10px 10px;
+    }
+    table.items tbody td{
+      border-bottom:1px solid var(--line); padding:10px 10px; vertical-align:top; font-size:13px;
+    }
+    .num{text-align:right; white-space:nowrap}
+    .desc{color:#374151; font-size:12px}
+
+    .totals{
+      margin-top:10px; display:grid; grid-template-columns: 1fr 320px; gap:16px; align-items:start;
+    }
+    .totals .notes{font-size:12px; color:#374151; border:1px dashed var(--line); border-radius:10px; padding:12px}
+    .totals .sum{
+      border:1px solid var(--line); border-radius:10px; overflow:hidden;
+    }
+    .sum-row{
+      display:flex; justify-content:space-between; padding:10px 12px; border-bottom:1px solid var(--line); font-size:13px;
+    }
+    .sum-row.label{background:#F9FAFB; color:#374151; font-weight:600}
+    .sum-row.total{background:var(--brand-weak); font-weight:800; color:var(--brand); font-size:15px}
+    .sum-row span{white-space:nowrap}
+
+    .pix{
+      margin-top:10px; display:flex; align-items:center; gap:12px; font-size:12px; color:#374151;
+    }
+    .pix img{width:96px; height:96px; border:1px solid var(--line); border-radius:8px; object-fit:contain; background:#fff}
+
+    .terms{margin-top:14px; font-size:12px; color:#4B5563}
+    .sign{margin-top:28px; display:flex; gap:20px}
+    .sig-box{flex:1}
+    .sig-line{height:42px; border-bottom:1px solid var(--line)}
+    .sig-caption{font-size:12px; color:#6B7280; margin-top:6px}
+
+    .footer{margin-top:22px; text-align:center; font-size:11px; color:#6B7280}
+    .print-btn{
+      margin: 8px 0 0; display:inline-block; padding:10px 14px; border-radius:10px;
+      border:1px solid var(--brand); color:var(--brand); background:#fff; cursor:pointer; font-weight:700;
+    }
+    .print-btn:hover{background:var(--brand-weak)}
+
+    @media print{
+      body{background:#fff}
+      .sheet{box-shadow:none; border:none; margin:0; padding:0}
+      .print-btn{display:none !important}
+      @page{size:A4; margin:14mm}
+      .sum-row.total{print-color-adjust:exact; -webkit-print-color-adjust:exact}
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <!-- Cabeçalho -->
+    <div class="header">
+      <div class="logo">
+        <!-- Troque o src pelo caminho do seu logo -->
+        <img src="{{ logo_src | default('logo-helptech.png') }}" alt="Logo HelpTech" />
+      </div>
+      <div class="brand">
+        <h1>HelpTech Antunes</h1>
+        <div class="muted">
+          Assistência técnica & serviços gráficos — Jundiaí/SP<br>
+          WhatsApp: {{ whatsapp | default('+55 11 95780-5217') }} • CNPJ: {{ cnpj | default('00.000.000/0000-00') }}<br>
+          Endereço: {{ endereco | default('Av. Luís Pereira dos Santos, 556 – Jundiaí/SP • CEP 13214-820') }}
+        </div>
+      </div>
+      <div class="meta">
+        <div class="badge">ORÇAMENTO</div>
+        <table>
+          <tr><th>Nº</th><td>{{ numero | default('0001') }}</td></tr>
+          <tr><th>Data</th><td>{{ data | default('17/09/2025') }}</td></tr>
+          <tr><th>Validade</th><td>{{ validade | default('7 dias') }}</td></tr>
+          <tr><th>Status</th><td><span class="pill">{{ status | default('Em análise') }}</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Blocos cliente e pagamento -->
+    <div class="blocks">
+      <div class="card">
+        <h3>Cliente</h3>
+        <p><b>{{ cliente }}</b></p>
+        <p>{{ cliente_doc | default('CPF/CNPJ não informado') }}</p>
+        <p>{{ cliente_endereco | default('Endereço do cliente') }}</p>
+        <p>{{ cliente_contato | default('Contato do cliente') }}</p>
+      </div>
+      <div class="card">
+        <h3>Pagamento</h3>
+        <p>Forma: <b>{{ forma_pagamento | default('PIX / Cartão / Dinheiro') }}</b></p>
+        <p>Prazo estimado: <b>{{ prazo | default('a combinar') }}</b></p>
+        <p>Garantia: <b>{{ garantia | default('90 dias (serviços)') }}</b></p>
+      </div>
+    </div>
+
+    <!-- Tabela de Itens (se houver) ou serviço único -->
+    {% if itens %}
+      <table class="items">
+        <thead>
+          <tr>
+            <th style="width:40%">Item/Serviço</th>
+            <th style="width:32%">Descrição</th>
+            <th style="width:8%">Qtde</th>
+            <th style="width:10%">Unitário</th>
+            <th style="width:10%" class="num">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in itens %}
+          <tr>
+            <td><b>{{ it.nome }}</b></td>
+            <td class="desc">{{ it.descricao }}</td>
+            <td class="num">{{ it.qtd }}</td>
+            <td class="num">R$ {{ it.unitario }}</td>
+            <td class="num">R$ {{ it.subtotal }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="card" style="margin-top:10px">
+        <h3>Serviço</h3>
+        <p><b>{{ servico }}</b></p>
+        {% if detalhes_servico %}<p class="desc">{{ detalhes_servico }}</p>{% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Totais + Observações -->
+    <div class="totals">
+      <div class="notes">
+        <b>Observações</b><br>
+        {{ observacoes | default('Este orçamento pode sofrer ajustes após avaliação técnica detalhada. Peças originais ou equivalentes de alta qualidade. Prazo e disponibilidade sujeitos a confirmação.') }}
+        {% if pix_qr_src %}
+        <div class="pix">
+          <img src="{{ pix_qr_src }}" alt="QR Code PIX">
+          <div>
+            <b>Pagamento via PIX</b><br>
+            Chave: {{ pix_chave | default('suporte@helptech.com.br') }}<br>
+            (Escaneie o QR Code ao lado)
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="sum">
+        {% if itens %}
+          <div class="sum-row label"><span>Subtotal</span><span>R$ {{ subtotal | default('0,00') }}</span></div>
+          {% if desconto %}<div class="sum-row"><span>Desconto</span><span>- R$ {{ desconto }}</span></div>{% endif %}
+          {% if acrescimos %}<div class="sum-row"><span>Acréscimos/Taxas</span><span>R$ {{ acrescimos }}</span></div>{% endif %}
+          {% if frete %}<div class="sum-row"><span>Frete</span><span>R$ {{ frete }}</span></div>{% endif %}
+          <div class="sum-row total"><span>Total</span><span>R$ {{ total | default(subtotal) }}</span></div>
+        {% else %}
+          <div class="sum-row label"><span>Valor do serviço</span><span>R$ {{ valor }}</span></div>
+          {% if desconto %}<div class="sum-row"><span>Desconto</span><span>- R$ {{ desconto }}</span></div>{% endif %}
+          {% if acrescimos %}<div class="sum-row"><span>Acréscimos</span><span>R$ {{ acrescimos }}</span></div>{% endif %}
+          <div class="sum-row total"><span>Total</span><span>R$ {{ total | default(valor) }}</span></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Assinaturas -->
+    <div class="sign">
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-caption">Assinatura do Cliente</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-caption">Responsável — HelpTech Antunes</div>
+      </div>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="footer">
+      Gerado automaticamente pelo sistema HelpTech. {{ rodape_extra | default('Atendimento rápido e transparente. Obrigado pela preferência!') }}
+    </div>
+
+    <button class="print-btn" onclick="window.print()">Imprimir / Salvar em PDF</button>
+  </div>
+</body>
+</html>
